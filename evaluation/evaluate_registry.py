@@ -27,7 +27,7 @@ from kvpress import (
     KeyDiffPress,
     KnormPress,
     KVzapPress,
-    KVzipPress,
+    KVzipPress, 
     ObservedAttentionPress,
     PyramidKVPress,
     QFilterPress,

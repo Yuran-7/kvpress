@@ -161,6 +161,7 @@ class KVPressTextGenerationPipeline(Pipeline):
         ]
 
         # Truncate context
+        # # 只截断 context_ids，question_ids 保持完整，不被截断
         if context_ids.shape[1] > max_context_length:
             logger.warning(
                 f"Context length has been truncated from {context_ids.shape[1]} to {max_context_length} tokens."
