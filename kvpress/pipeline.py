@@ -320,9 +320,9 @@ class KVPressTextGenerationPipeline(Pipeline):
             return {"answer": model_outputs[0]}
         return {"answers": model_outputs}
 
-
+# PIPELINE_REGISTRY是transformers库中的一个注册表，用于注册pipeline
 PIPELINE_REGISTRY.register_pipeline(
-    "kv-press-text-generation",
-    pipeline_class=KVPressTextGenerationPipeline,
+    "kv-press-text-generation",  # 注册的名字，可以用这个名字来调用pipeline
+    pipeline_class=KVPressTextGenerationPipeline,   # 对应的自定义类
     pt_model=AutoModelForCausalLM,
 )

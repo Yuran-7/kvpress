@@ -61,6 +61,7 @@ class ChunkKVPress(BasePress):
         if self.press.compression_ratio == 0:
             return keys, values
 
+        # 程序在运行时会检查 attentions 变量是否为空（None），如果不为空，程序就会报错并停止运行
         assert attentions is None, "ChunkPress does not support attentions."
 
         kv_len = keys.shape[2]

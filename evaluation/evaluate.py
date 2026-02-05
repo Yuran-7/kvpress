@@ -338,8 +338,8 @@ class EvaluationRunner:
 
         if self.config.query_aware:
             logger.info("Query-aware compression: including question in context for compression.")
-            df["context"] = df["context"] + df["question"]  # type: ignore[index]
-            df["question"] = ""  # type: ignore[index]
+            df["context"] = df["context"] + df["question"]  # 将问题拼接在正文后面
+            df["question"] = ""  # 清空原问题字段，避免重复计算
 
         self.df = df
         logger.info(f"Dataset processed with {len(self.df)} entries.")
@@ -381,6 +381,8 @@ class EvaluationRunner:
             pipeline_kwargs["device_map"] = "auto"
         else:
             pipeline_kwargs["device"] = device
+        # pipeline是transformers库中的一个函数，用于加载pipeline
+        # kv-press-text-generation 是我们自己注册的pipeline的名字，在kvpress/pipeline.py中注册
         self.pipeline = pipeline("kv-press-text-generation", **pipeline_kwargs)
 
         self.pipeline.model.eval()
