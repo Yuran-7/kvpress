@@ -29,6 +29,7 @@ class ScorerPress(BasePress):
 
     compression_ratio: float = 0.0
 
+    # 这是一个钩子函数，只有在@dataclass装饰器的类中才会被调用
     def __post_init__(self):
         assert 0 <= self.compression_ratio < 1, "Compression ratio must be between 0 and 1"
 
@@ -87,15 +88,19 @@ class ScorerPress(BasePress):
             return keys, values
 
         # Compute scores
+        # (batch_size, num_kv_heads, seq_len)
         scores = self.score(module, hidden_states, keys, values, attentions, kwargs)
 
         # Get indices of KV pairs with the lowest scores
         k_len = keys.shape[2]
-        n_kept = int(k_len * (1 - self.compression_ratio))
+        n_kept = int(k_len * (1 - self.compression_ratio))  # 压缩比例0.9，保留10%的token
+        # topk函数返回对象包括两部分：values和indices，形状都是(batch_size, num_kv_heads, n_kept)
         indices = scores.topk(n_kept, dim=-1).indices
+        # 扩充最后一个维度，使得indices的形状变为(batch_size, num_kv_heads, n_kept, head_dim)，以便后续gather操作
         indices = indices.unsqueeze(-1).expand(-1, -1, -1, module.head_dim)
 
         # Prune keys and values
+        # gather函数根据indices索引从keys和values中选择对应的元素，得到压缩后的keys和values，形状为(batch_size, num_kv_heads, n_kept, head_dim)
         keys = keys.gather(2, indices).contiguous()
         values = values.gather(2, indices).contiguous()
 

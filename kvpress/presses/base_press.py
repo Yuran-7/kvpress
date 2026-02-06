@@ -24,6 +24,7 @@ from kvpress.utils import extract_keys_and_values
 
 logger = logging.getLogger(__name__)
 
+# Tuple (元组) 使用圆括号 ( ) 定义
 SUPPORTED_MODELS = (
     LlamaForCausalLM,
     MistralForCausalLM,
@@ -33,7 +34,7 @@ SUPPORTED_MODELS = (
     Gemma3ForConditionalGeneration,
 )
 
-
+# 自动帮你生成3个函数：__init__, __repr__, __eq__
 @dataclass
 class BasePress:
     """
@@ -89,7 +90,7 @@ class BasePress:
             A tuple containing the compressed keys and values tensors. The returned tensors
             should have reduced sequence length dimension compared to the input tensors.
         """
-
+        # 这个意思是如果子类没有实现compress方法，就会抛出一个异常，提示开发者必须在子类中实现这个方法
         raise NotImplementedError("compress method must be implemented in subclass")
 
     def forward_hook(self, module: nn.Module, input: list[torch.Tensor], kwargs: dict, output: list):

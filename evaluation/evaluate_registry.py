@@ -69,7 +69,7 @@ SCORER_REGISTRY = {
     "math500": math500_scorer,
 }
 
-
+# 当 Python 执行 from evaluate_registry import PRESS_REGISTRY ，会立即调用所有构造函数，创建好的对象存储在字典中，常驻内存
 PRESS_REGISTRY = {
     "adakv_snapkv": AdaKVPress(SnapKVPress()),
     "block_keydiff": BlockPress(press=KeyDiffPress(), block_size=128),

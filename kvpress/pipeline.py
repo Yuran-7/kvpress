@@ -20,7 +20,7 @@ from kvpress.presses.dms_press import DMSPress
 
 logger = logging.getLogger(__name__)
 
-
+# Pipeline是抽象类，必须重写其中的抽象方法
 class KVPressTextGenerationPipeline(Pipeline):
     """
     Pipeline for key-value cache compression in causal language models.
@@ -169,7 +169,7 @@ class KVPressTextGenerationPipeline(Pipeline):
             context_ids = context_ids[:, :max_context_length]
 
         return {"context_ids": context_ids, "questions_ids": question_ids}
-
+    # 抽象方法，必须重写
     def _forward(
         self,
         input_tensors: dict[str, GenericTensor],
@@ -260,7 +260,7 @@ class KVPressTextGenerationPipeline(Pipeline):
                 cache.layers[layer_idx]._quantized_values = cache.layers[layer_idx]._quantized_values[
                     :, :, :sequence_length
                 ]
-
+    # 这个函数不是Pipeline class的函数，而是KVPressTextGenerationPipeline class的一个辅助函数，用于在生成每个问题的答案后，从缓存中移除生成的答案对应的键值对，以便下一个问题的生成不受前一个问题生成的影响
     def generate_answer(
         self, question_ids: torch.Tensor, cache: Cache, context_length: int, max_new_tokens: int
     ) -> str:

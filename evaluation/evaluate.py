@@ -132,7 +132,7 @@ class EvaluationConfig:
 
         if self.threshold is not None:
             components[-1] = f"{self.threshold:.2f}"
-        if self.fraction < 1.0:
+        if self.fraction < 1.0: # 默认为1.0，目录名字中就没有写fraction
             components.append(f"fraction{self.fraction:.3f}")
         if self.max_context_length is not None:
             components.append(f"max_context{self.max_context_length}")
@@ -143,11 +143,12 @@ class EvaluationConfig:
         if self.needle_depth is not None and self.dataset == "needle_in_haystack":
             components.append(f"needle_depth{self.needle_depth}")
 
-        dir_name = "__".join(filter(None, components))  # Filter None/empty strings
+        dir_name = "__".join(filter(None, components))  # Filter None/empty strings，filter是内置函数，剔除：None、空字符串 ""、数字 0、False 等
         config_dir = output_dir / dir_name
 
         # Make sure the directory does not exist, if it does, add a number to the end
         # This is to avoid overwriting results
+        # 如果之前一样的配置跑过一次，就会生成子目录 config_dir/1，如果又跑一次一样的配置，就会生成 config_dir/2，以此类推
         if config_dir.exists():
             i = 1
             while (config_dir / f"{i}").exists():
@@ -189,7 +190,7 @@ class EvaluationRunner:
 
     """
 
-    def __init__(self, config: EvaluationConfig):
+    def __init__(self, config: EvaluationConfig): # 倒数第六行，初始化
         """
         Initializes the EvaluationRunner with a given configuration.
 
@@ -204,7 +205,7 @@ class EvaluationRunner:
         self.df: Optional[pd.DataFrame] = None  # Will be set by _load_dataset()
         self._setup_logging()
         self._setup_deterministic_seeds()
-        logger.info(f"Initialized EvaluationRunner with config:\n{json.dumps(asdict(self.config), indent=2)}")
+        logger.info(f"Initialized EvaluationRunner with config:\n{json.dumps(asdict(self.config), indent=2)}")  # 打印配置信息
 
     def _setup_deterministic_seeds(self):
         """Set deterministic seeds for reproducible results."""
@@ -237,7 +238,7 @@ class EvaluationRunner:
         Path
             The path to the output directory.
         """
-        output_dir = Path(self.config.output_dir)
+        output_dir = Path(self.config.output_dir) # ./results
         output_dir.mkdir(parents=True, exist_ok=True)
         logger.info(f"Output directory set to: {output_dir}")
         return output_dir
@@ -299,6 +300,7 @@ class EvaluationRunner:
 
         self.press = press
         # Set the press info in the config for saving to YAML
+        # str函数调用press的__repr__方法
         self.config.press_init_command = str(press)
         logger.info(f"KV Press '{press_name}' setup.")
 
@@ -381,7 +383,7 @@ class EvaluationRunner:
             pipeline_kwargs["device_map"] = "auto"
         else:
             pipeline_kwargs["device"] = device
-        # pipeline是transformers库中的一个函数，用于加载pipeline
+        # pipeline是transformers库中的一个函数，返回一个Pipeline对象
         # kv-press-text-generation 是我们自己注册的pipeline的名字，在kvpress/pipeline.py中注册
         self.pipeline = pipeline("kv-press-text-generation", **pipeline_kwargs)
 
@@ -496,7 +498,7 @@ class EvaluationRunner:
         metrics_filename = results_dir / "metrics.json"
         config_filename = results_dir / "config.yaml"
 
-        if predictions_filename.exists() and metrics_filename.exists():
+        if predictions_filename.exists() and metrics_filename.exists(): # 个人感觉基本上不会进入这个分支
             logger.info(
                 f"Evaluation files already exist at \n {predictions_filename} \n {metrics_filename}.\nSkipping..."
             )
