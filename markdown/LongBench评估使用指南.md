@@ -170,7 +170,7 @@ if fraction < 1.0:
 **关键规则**：
 ```bash
 # ✅ 正确：dataset 和 data_dir 都要改
-python evaluate.py --dataset longbench-e --data_dir hotpotqa_e --press_name knorm --compression_ratio 0.5
+python evaluate.py --dataset longbench-e --data_dir hotpotqa_e --press_name snapkv --compression_ratio 0.5
 
 # ❌ 错误：只改了一个
 python evaluate.py --dataset longbench --data_dir hotpotqa_e
